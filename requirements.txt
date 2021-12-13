@@ -1,0 +1,12 @@
+reportlab
+itertools
+pandas
+sklearn
+numpy
+matplotlib
+seaborn
+pylab
+pprint
+statistics
+random
+time
