@@ -1,5 +1,5 @@
 reportlab
-itertools
+more-itertools
 pandas
 sklearn
 numpy

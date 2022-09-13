@@ -1,9 +1,4 @@
-import operator
-from os import terminal_size
-import uuid
-from pandas.core.accessor import register_dataframe_accessor
 from itertools import combinations
-import pdb
 
 def calculate_tags(rule) -> int:
     count = 0
@@ -33,7 +28,6 @@ def comprobar_contraejemplo(rule, rules_check) -> (bool):
             boolean = True
             break
     return boolean
-
 
 
 def eliminar_elemento(remove_examples, set_of_examples):
@@ -191,8 +185,6 @@ def devolver_ejemplos(rule_c, set_of_examples):
 
     return list_of_examples_to_remove
 
-def elsevier_algorith_plus(rules, rules_check, n_vars, class_n, start):
-    pass
 
 def elsevier_algorithm(rules, rules_check, n_vars, class_n):
     set_of_examples = rules.copy()

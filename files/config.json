@@ -9,6 +9,7 @@
           "Virginica"
     ],
     "n_vars": 4,
+    "n_labels": 7,
     "train": 0.8,
     "test": 0.2,
     "execs": 10,

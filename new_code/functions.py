@@ -1,4 +1,25 @@
 import random
+import json
+
+
+def load_data(df, path):
+    data = []
+    json_object = load_json(path)
+    labels = json_object["labels"]
+    ddv = json_object["ddv_d"]
+    train_set = json_object["train"]
+    n_labels = json_object["n_labels"]
+    class_names = json_object["class_names"]
+    test_set = json_object["test"]
+    n_vars = json_object["n_vars"]
+    execut = json_object["execs"]
+    division = [train_set, test_set]
+    
+    
+    for i in df.index:
+        data.append([[df['sepal.length'][i],df['sepal.width'][i],df['petal.length'][i],df['petal.width'][i]],df['variety'][i]])
+
+    return execut, n_vars, n_labels, ddv, labels, data, division, class_names
 
 def create_dict_rules(rules):
     dict_rules = {}
@@ -7,6 +28,13 @@ def create_dict_rules(rules):
         element = rules[x]
         dict_rules[key] = element
     return dict_rules
+
+def load_json(path):
+    with open(path, 'r') as file:
+        data = file.read()
+        dataret = json.loads(data)
+        file.close()
+    return dataret
 
 def check_anexes(labels_list, label_to_check):
     test = []
@@ -145,6 +173,32 @@ def divide_train_test(data, train_set, test_set):
     train_sample = data_l[:number_of_elements_train]
     test_sample = data_l[number_of_elements_train:]
     return train_sample, test_sample if train_set + test_set == 1 else print("Error en los porcentajes")
+
+def divide_train_test_general(data_general, train_set, test_set):
+    sample = random.sample(range(0, len(data_general)), len(data_general))
+    
+    general_data_test = []
+    general_data_train = []
+    if train_set + test_set == 1: 
+            
+        for data in data_general:
+            train_sample = []
+            test_sample = []  
+            data_l = []  
+            
+            for x in range(0, len(data)):
+                data_l.insert(sample[x], data[x])    
+            
+            number_of_elements_train = int(round(len(data_l) * train_set, 0))
+            train_sample = data_l[:number_of_elements_train]
+            test_sample = data_l[number_of_elements_train:]
+            
+            general_data_test.append(test_sample)
+            general_data_train.append(train_sample)
+    else:
+        print("Error en los porcentajes")
+    return general_data_train, general_data_test
+
 
 def bi_function(u, alpha, beta):
     if u < alpha:
