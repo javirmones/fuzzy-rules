@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import seaborn as sns
 import numpy as np
-from functions import membership_function
-from functions import go_membership_function
+from new_code.functions import membership_function
+from new_code.functions import go_membership_function
 
 def exploratory_data_analysis(df):
     sns.set_style('darkgrid')
@@ -147,9 +147,7 @@ def plot_ddv(ddv_dict, var):
     colors = ['b', 'g', 'r', 'c', 'm', 'y','b','r','k']
     values = []
     i = 0
-
     
-
     fig= plt.figure(figsize=(7,7))
     fig.tight_layout()
     ticks = range(0,4)
