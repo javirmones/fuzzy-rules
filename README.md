@@ -10,30 +10,26 @@ Su objetivo principal es la comparativa entre dos algoritmos que denominaremos:
 Se compone de distintos directorios:
 
 * **code**: Elementos del codigo
+* **new_code**: Actualizacion para n clases
 * **files**: Datos en crudo
 
-TO-DO
-
 Clases de la carpeta /code
+
+1. cancer.py
+2. graphic_rep.py
+3. order_features.py
+
+Clases de la carpeta /new_code
 1. amplify_algorithm.py
-2. cancer.py
-3. classifier.py
-4. create_ddv.py
-5. elsevier_algorithm.py
-6. functions.py
-7. fuzzyfy.py
-8. graphic_rep.py
-9. main.py
-10. order_features.py
-11. pdf_generator.py
+2. classifier.py
+3. create_ddv.py
+4. elsevier_algorithm.py
+5. functions.py
+6. fuzzyfy.py
+7. main.py
+8. pdf_generator.py
 
 
-### Amplify algorithm
-
-TODO
-
-### Elsevier algorithm
-TODO
 
 
 

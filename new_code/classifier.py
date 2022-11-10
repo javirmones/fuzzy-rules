@@ -1,3 +1,4 @@
+from ast import iter_child_nodes
 from functions import *
 from fuzzyfy import *
 from amplify_algorithm import *
@@ -38,6 +39,7 @@ def calculate_activation(x, index, label, ddv):
             
             
 def shot_rules(example, rules, dict_a):
+
     cas_t = []
     for rule in range(0, len(rules)):
         cas = []
@@ -141,65 +143,74 @@ def ejecutar_clasificacion(data_tests, algorithm, rules, ddv, labels):
     return percents, tuple_list, dict_rules
   
 
-def classify(ex, class_names, algorithm, data, labels, n_vars, division, ddv, path, author, option, pdf_mode):
+def classify(json_object, data, path_pdf, author, pdf_mode, algorithm):
     inicio = time.time()
+    division = [json_object["train"], json_object["test"]]
+    ddv = json_object["ddv_d"]
+    n_vars = json_object["n_vars"]
+    class_names = json_object["class_names"]
+    labels = json_object["labels"]
+
     avg_amp = []
     avg_else = []
     ej_list = []
     len_total_amp = []
     len_total_else = []
-    dict_list = []
-    dict_else = []
     tuple_list_amp_f = []
     tuple_list_els_f = []
+    dict_else = []
+    dict_list = []
+    for ej in range(1, json_object["execs"]+1):
+        ramp = []
+        relse = []
 
-    for ej in range(1, ex+1):
+        r_amp, r_else, data_tests = fuzzyfy(data, division, ddv, labels, n_vars, class_names)
+        
+        ramp = list(itertools.chain(*r_amp))
+        relse = list(itertools.chain(*r_else))
+        len_amp = calc_len_rules(ramp, class_names)
+        len_else = calc_len_rules(relse, class_names)
+        #ramp_cls = divide_classes_general(ramp)
+        # relse_cls = divide_classes_general(relse)
 
-        ramp, relse, data_tests = fuzzyfy(data, division, ddv, labels, n_vars, class_names, option)
-        ramp1, ramp2, ramp3 = divide_classes_new(ramp)
-        relse1, relse2, relse3 = divide_classes_new(relse)
         average_amp, tuple_list_amp, dict_rules_amp = ejecutar_clasificacion(data_tests, algorithm[0], ramp, ddv, labels)
         average_else, tuple_list_els, dict_rules_els = ejecutar_clasificacion(data_tests, algorithm[1], relse, ddv, labels)
-
         dict_list.append(dict_rules_amp)
         dict_else.append(dict_rules_els)
-
         avg_amp.append(average_amp)
         avg_else.append(average_else)
         tuple_list_amp_f.append(tuple_list_amp)
         tuple_list_els_f.append(tuple_list_els)
         
-
         
-        len_amp = [len(ramp1), len(ramp2), len(ramp3)]
-        len_else = [len(relse1), len(relse2), len(relse3)]
         len_total_amp.append(len_amp)
         len_total_else.append(len_else)
         ej_list.append(ej)
 
-    
-       
-    
     average_mean = calculate_average(avg_amp)
     average_mean_else = calculate_average(avg_else)
     n_examples = len(data)
     n_examples_train = n_examples - len(data_tests)
     n_examples_test = n_examples - n_examples_train
     examples_len = [n_examples, n_examples_train, n_examples_test]
-    #rules = [ramp, relse]
     fin = time.time()
     tiempo = round(fin-inicio,1)
+
 
     if pdf_mode == 1:
         text_amp, data_amp = create_text(tiempo, avg_amp, average_mean, dict_list, class_names, ej_list, algorithm[0], division, len_total_amp, n_vars, examples_len, tuple_list_amp_f, author[0])
         text_else, data_else = create_text(tiempo, avg_else, average_mean_else, dict_else, class_names, ej_list, algorithm[1], division, len_total_else, n_vars, examples_len, tuple_list_els_f, author[1])
-
         data_final_table = []
-        header = ['P', 'NRSe', 'NRVe', 'NRVi', 'Tot', 'Acc', 'NC', 'E', 'NRSe', 'NRVe', 'NRVi', 'Tot', 'Acc', 'NC', 'E']
+        header_data = []
+        str_rl = "NR"
+        for x in class_names:
+            header_data.append(str_rl+x[0:2])
+
+        header = ['P'] + header_data + ['Tot', 'Acc', 'NC', 'E'] + header_data + ['Tot', 'Acc', 'NC', 'E']
         legend = "<b> P: </b> Prueba <br/>"
-        legend += "<b> NRSe: </b> Numero de Reglas Setosa <br/>"
-        legend += "<b> NRVe: </b> Numero de Reglas Versicolor <br/>"
-        legend += "<b> NRSe: </b> Numero de Reglas Virginica <br/>"
+        for x in class_names:
+            legend += "<b> NRSe: </b> Numero de Reglas "+ x +" <br/>"
+
         legend += "<b> Tot: </b> Total <br/>"
         legend += "<b> Acc: </b> Porcentaje de Acierto <br/>"
         legend += "<b> NC: </b> Porcentaje de No Clasificados  <br/>"
@@ -212,10 +223,10 @@ def classify(ex, class_names, algorithm, data, labels, n_vars, division, ddv, pa
             resultant_element = element_amp + element_else[1:]
             
             data_final_table.append(resultant_element)
-        build_pdf(text_amp, data_amp, text_else, data_else, data_final_table, legend, path)
+        build_pdf(text_amp, data_amp, text_else, data_else, data_final_table, legend, path_pdf)
     elif pdf_mode == 2:
         text_amp, data_amp = create_text(tiempo, avg_amp, average_mean, dict_list, class_names, ej_list, algorithm[0], division, len_total_amp, n_vars, examples_len, tuple_list_amp_f, author[0])
-        build_amp_pdf(text_amp, data_amp, path)
+        build_amp_pdf(text_amp, data_amp, path_pdf)
     elif pdf_mode == 3:
         text_else, data_else = create_text(tiempo, avg_else, average_mean_else, dict_else, class_names, ej_list, algorithm[1], division, len_total_else, n_vars, examples_len, tuple_list_els_f, author[1])
-        build_els_pdf(text_else, data_else, path)
+        build_els_pdf(text_else, data_else, path_pdf)

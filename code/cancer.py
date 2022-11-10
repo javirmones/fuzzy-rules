@@ -1,17 +1,17 @@
-
 import pandas as pd
 import warnings
 import pprint
-from fuzzyfy import *
-from functions import *
-from create_ddv import *
+from new_code.fuzzyfy import *
+from new_code.functions import *
+from new_code.create_ddv import *
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import load_breast_cancer
 from order_features import create_new_order_vars
-from classifier import *
+from new_code.classifier import *
+
 array_sep = [ "A", "B", "C", "D", "E", "F", "G"]
 
 def load_data():

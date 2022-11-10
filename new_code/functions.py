@@ -1,25 +1,56 @@
 import random
 import json
+from pandas.core.common import flatten
+import itertools
+
+def divide_classes_general(data_train, class_names):
+    array_general_classes = []
+    for class_obj in class_names:
+        array_class_obj = []
+        for x in range(0, len(data_train)):
+            if data_train[x][-1] == class_obj:
+                array_class_obj.append(data_train[x])
+        array_general_classes.append(array_class_obj)
+    return array_general_classes
+        
+def calc_len_rules(rules, class_names):
+    
+    len_items = []
+    for class_obj in class_names:
+        class_object = []
+        for x in range(0, len(rules)):
+            if rules[x][-1] == class_obj:
+                class_object.append(rules[x])
+        len_items.append(len(class_object))
+
+    return len_items     
+
+def ask_option():
+    correcto = False
+    num = 0
+    while(not correcto):
+        try:
+            num = int(input("Introduce un numero entero: "))
+            correcto=True
+        except ValueError:
+            print('Error, introduce un numero entero')   
+    return num
 
 
 def load_data(df, path):
+    # Funcion para cargar los datos, añadir comprobacion
     data = []
-    json_object = load_json(path)
-    labels = json_object["labels"]
-    ddv = json_object["ddv_d"]
-    train_set = json_object["train"]
-    n_labels = json_object["n_labels"]
-    class_names = json_object["class_names"]
-    test_set = json_object["test"]
-    n_vars = json_object["n_vars"]
-    execut = json_object["execs"]
-    division = [train_set, test_set]
+    try:
+        json_object = load_json(path)
+        if len(json_object.keys()) < 8:
+            raise Exception
+    except Exception as e:
+        print("Error", e)
     
-    
-    for i in df.index:
-        data.append([[df['sepal.length'][i],df['sepal.width'][i],df['petal.length'][i],df['petal.width'][i]],df['variety'][i]])
+    for _, row in df.iterrows():
+        data.append([list(row[:-1]), row[-1]])
 
-    return execut, n_vars, n_labels, ddv, labels, data, division, class_names
+    return json_object, data
 
 def create_dict_rules(rules):
     dict_rules = {}
@@ -175,13 +206,15 @@ def divide_train_test(data, train_set, test_set):
     return train_sample, test_sample if train_set + test_set == 1 else print("Error en los porcentajes")
 
 def divide_train_test_general(data_general, train_set, test_set):
-    sample = random.sample(range(0, len(data_general)), len(data_general))
+    len_data_general = len(list(flatten(data_general)))
+    sample = random.sample(range(0, len_data_general), len_data_general)
     
     general_data_test = []
     general_data_train = []
     if train_set + test_set == 1: 
             
         for data in data_general:
+            
             train_sample = []
             test_sample = []  
             data_l = []  
@@ -198,6 +231,14 @@ def divide_train_test_general(data_general, train_set, test_set):
     else:
         print("Error en los porcentajes")
     return general_data_train, general_data_test
+
+
+
+def give_list_of_list(array, element):
+    element = array[element]
+    new_array = list(filter(lambda x: x!=element, array))
+    flat_list = list(itertools.chain(*new_array))
+    return flat_list
 
 
 def bi_function(u, alpha, beta):
@@ -229,12 +270,3 @@ def membership_function(x, a, b, c, d):
         return round((d - x)/(d - c), 1)
     elif x > d:
         return 0
-
-def escribir_archivo(data, string, path):
-    with open(path, 'w+') as f:
-        f.seek(0)
-        f.write("\t\t---Resultados---"+"\n")
-        f.write("Para "+string+ " hay un total de " +str(len(data)) +"\n")
-        f.write("Etiquetas \t\t\t\t Ocurrencias\n")
-        for item in data:
-            f.write(str(item[0])+": \t\t"+str(item[1])+"\n")

@@ -1,4 +1,6 @@
 import itertools
+import re
+from tkinter import X
 from reportlab.lib import pagesizes
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, inch
@@ -17,6 +19,7 @@ def readable_rules(rules):
     for x in range(0, len(rules)):
         flag = False
         regla = rules[x]
+
         string = str(regla[0])+": if"
         count = 0
         
@@ -53,7 +56,7 @@ def create_text(tiempo, avg_amp, average_mean, dict_rules_amp, class_names, ej_l
     ylist = [h - 200 - y_offset - i*padding for i in range(max_rows_per_page + 1)]
 
     
-    data = [["Prueba", "R. Setosa", "R. Versi", "R. Virgi", "Total", "Acierto", "NC", "Fallo"]]
+    data = [["Prueba"] + class_names + ["Total", "Acierto", "NC", "Fallo"]]
 
     for i in range(0,len(ej_list)):
         elemento_len = len_total_amp[i]
@@ -78,46 +81,34 @@ def create_text(tiempo, avg_amp, average_mean, dict_rules_amp, class_names, ej_l
      
             new_list.append([keys_dict[y], values_dict[y][0], values_dict[y][1], values_dict[y][2]])
 
-        iris_setosa = []
-        iris_versicolor = []
-        iris_virginica = []
-    
-        for z in range(0, len(new_list)):
-            el = new_list[z]
-            if el[3] == "Setosa":
-                iris_setosa.append(el)
-            elif el[3] == "Versicolor":
-                iris_versicolor.append(el)
-            elif el[3] == "Virginica":
-                iris_virginica.append(el)
+        rules_of_classes = []
+        def_rules = []
+        for x in range(0, len(class_names)):
+            class_rul = []
+            for z in range(0, len(new_list)):
+                el = new_list[z]
+                if el[3] == class_names[x]:
+                    class_rul.append(el)
+            rules_of_classes.append(class_rul)
 
-        rules_to_setosa = readable_rules(iris_setosa)
-        rules_to_versicolor = readable_rules(iris_versicolor)
-        rules_virgi = readable_rules(iris_virginica)
+
+        for y in rules_of_classes:
+            def_rules.append(readable_rules(y))
+
         #text_it.setFont("Courier-Bold",8)
         #text_it.textLine("Reglas Iris setosa: " +str(len(iris_setosa)))
         #text_it.setFont("Courier",8)
-        text += "<br/>"
-        text += "<b> Reglas Iris setosa: " +str(len(iris_setosa)) +"</b> <br/><br/>"
-        for a in rules_to_setosa:
-            text += a +"<br/>"
+        for x in range(0, len(class_names)):
+            rules = def_rules[x]
+            text += "<br/>"
+            text += "<b> Reglas "+ class_names[x] +" : " +str(len(rules)) +"</b> <br/><br/>"
+            for a in rules:
+                text += a +"<br/>"
+            text += "<br/>"
         #text_it.textLine("")
         #text_it.setFont("Courier-Bold",8)
         #text_it.textLine("Reglas Iris versicolor: " +str(len(iris_versicolor)))
-        text += "<br/>"
-        text += "<b> Reglas Iris versicolor: " +str(len(iris_versicolor)) +"</b> <br/><br/>"
-        #text_it.setFont("Courier",8)
-      
-        for b in rules_to_versicolor:
-            text += b +"<br/>"
-        #text_it.textLine("")
-        #text_it.setFont("Courier-Bold",8)
-        text += "<br/>"
-        text += "<b> Reglas Iris virginica: " +str(len(iris_virginica)) +"</b> <br/><br/>"
-        #text_it.setFont("Courier",8)
-        for e in rules_virgi:
-            text += e +"<br/>"
-        #text_it.textLine("")
+        
         text += "<br/>"
         text += "<br/>"
         #text_it.textLine("Pruebas realizadas con: " +str(len(data_tests))+" ejemplos")

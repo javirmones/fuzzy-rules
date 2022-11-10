@@ -1,7 +1,7 @@
 from os import mkdir, stat
 from classifier import *
 from pdf_generator import *
-from functions import *
+from functions import ask_option, load_data
 
 import pandas as pd
 import json
@@ -31,51 +31,31 @@ pdf_mode = 1
 inference = 0
 
 
-def ask_option():
- 
-    correcto = False
-    num = 0
-    while(not correcto):
-        try:
-            num = int(input("Introduce un numero entero: "))
-            correcto=True
-        except ValueError:
-            print('Error, introduce un numero entero')
-     
-    return num
-
 def main():
+    global pdf_mode, inference
     try:
         stat(BASE_DIR)
     except FileNotFoundError as e:
         mkdir(BASE_DIR)
     # Fuzzyfy process - we read the file with the main config
     df = pd.read_csv(PATH_DATA)
-    execut, n_vars, ddv, labels, data, division, class_names = load_data(df)
-    global pdf_mode, inference
+    json_object, data = load_data(df, PATH_CONFIG)
+    
     algorithm = ["Amplify", "Elsevier"]
-    author = ["Castro, Castro-schez, zurita", "author2"]
+    author = ["Castro, Castro-schez, zurita", "Monescillo and company"]
     path_pdf = PATH_PDF    
 
     exit_var = False
     option = 0
 
     while not exit_var:
-        print("1. Ejecutar con distribucion aleatoria")
-        print("2. Ejecutar con distribucion similar")
-        print("3. Menu de PDFs")
-        print("4. Inferencia")
-        print("5. Salir")
+        print("1. Ejecutar con distribucion similar")
+        print("2. Menu de PDFs")
+        print("3. Salir")
         option = ask_option()
-    
         if option == 1:
-
-            classify(execut, class_names, algorithm, data, labels, n_vars, division, ddv, path_pdf, author, option, pdf_mode)
+            classify(json_object, data, path_pdf, author, pdf_mode, algorithm)
         elif option == 2:
-           
-            classify(execut, class_names, algorithm, data, labels, n_vars, division, ddv, path_pdf, author, option, pdf_mode)
-        elif option == 3:
-            
             exit_men = False
             while not exit_men:
                 print("Seleccione el modo de crear el PDF")
@@ -96,29 +76,12 @@ def main():
                     exit_men = True
                 else:
                     print("Introduce un numero entre 1 y 4")
-        elif option == 4:
-            exit_mem = False
-            while not exit_mem:
-                print("Seleccione el modo de inferencia")
-                print("1. Inferencia sin anexos")
-                print("2. Inferencia con anexos")
-                print("3. Salir")
-                option_men = ask_option()
-                if option_men == 1:
-                    inference = 0
-                    exit_mem = True
-                elif option_men == 2:
-                    inference = 1
-                    exit_mem = True
-                elif option_men == 3:
-                    exit_mem = True
-                else:
-                    print("Introduce un numero entre 1 y 3")
-        elif option == 5:
+
+        elif option == 3:
             exit_var = True
 
         else:
-            print("Introduce un numero entre 1 y 5")
+            print("Introduce un numero entre 1 y 3")
 
 
 

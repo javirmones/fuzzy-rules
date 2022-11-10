@@ -189,7 +189,7 @@ def devolver_ejemplos(rule_c, set_of_examples):
 def elsevier_algorithm(rules, rules_check, n_vars, class_n):
     set_of_examples = rules.copy()
     reglas_finales = []
-    print(rules)
+
     for i in range(1, n_vars+1):
 
         for r in range(0, len(set_of_examples)):

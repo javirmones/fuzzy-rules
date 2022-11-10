@@ -1,9 +1,9 @@
 import pandas as pd
 from sklearn.datasets import load_breast_cancer
 from sklearn.feature_selection import SelectKBest, chi2
-from fuzzyfy import fuzzy_single
-from create_ddv import *
-from functions import get_keys_with_value
+from new_code.fuzzyfy import fuzzy_single
+from new_code.create_ddv import *
+from new_code.functions import get_keys_with_value
 
 
 #La idea principal de este script es ordenar las etiquetas para que
