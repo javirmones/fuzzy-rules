@@ -1,21 +1,18 @@
 {
-
     "class_names": [
         "Setosa",
         "Versicolor",
         "Virginica"
     ],
-    
-    "n_vars": 4,
-    "vars": ["sepal.length","sepal.width","petal.length","petal.width","variety"],
-    "n_labels": 7,
+    "vars": ["sepal.length","sepal.width","petal.length","petal.width"],
+    "target_var": "variety",
     "labels": [
         "HN", "MN", "SN", "Z", "SP", "MP", "HP"
     ],
     "train": 0.8,
     "test": 0.2,
     "execs": 10,
-
+    "limit" :150,
     "ddv_d":{
         "x0":{
             "HN":[4.3, 4.3, 4.75, 5.20],

@@ -1,0 +1,15 @@
+{
+    "class_names": ["fail","pass","notable"],
+    "vars": ["fixed acidity","citric acid","pH","alcohol"],
+    "target_var": "quality2",
+    "labels": [
+        "A", "B", "C", "D", "E", "F", "G"
+    ],
+    "train": 0.7,
+    "test": 0.3,
+    "execs": 2,
+    "ddv_d": {},
+    "limit": 300
+        
+
+}
