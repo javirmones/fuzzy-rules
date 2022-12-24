@@ -40,12 +40,12 @@ def main():
         print("4. Salir")
         option = ask_option()
         if option == 1:
-            classify(json_object, data, OUTPUT_JSON, author[0], algorithm[0], 1)
-            classify(json_object, data, OUTPUT_JSON, author[1], algorithm[1], 1)
+            classify(json_object, data, OUTPUT_JSON, author[0], algorithm[0])
+            classify(json_object, data, OUTPUT_JSON, author[1], algorithm[1])
         elif option == 2:
-            classify(json_object, data, OUTPUT_JSON, author[0], algorithm[0], 1)
+            classify(json_object, data, OUTPUT_JSON, author[0], algorithm[0])
         elif option == 3: 
-            classify(json_object, data, OUTPUT_JSON, author[1], algorithm[1], 1)
+            classify(json_object, data, OUTPUT_JSON, author[1], algorithm[1])
         elif option == 4:
             exit_var = True
 

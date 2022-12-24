@@ -101,7 +101,7 @@ def determine_shot_rules(example, algorithm, rules, ddv):
     return compare_list[pos_max]
 
 
-def ejecutar_clasificacion(data_tests, algorithm, rules, ddv, labels):
+def ejecutar_clasificacion(data_tests, algorithm, rules, ddv, labels, labels_dct):
     tuple_list = []
     fail = 0
     counter = 0
@@ -147,17 +147,16 @@ def ejecutar_clasificacion(data_tests, algorithm, rules, ddv, labels):
     return percents, tuple_list, dict_rules
   
 
-def classify(json_object, data, filename_json, author, algorithm, flag):
+def classify(json_object, data, filename_json, author, algorithm):
     inicio = time.time()
     date = datetime.now()
     path_json = PATH + filename_json + '_' + algorithm +'.json'
     division = [json_object["train"], json_object["test"]]
     ddv = json_object["ddv_d"]
-    
     vars = json_object["vars"]
     vars.pop(-1)
     n_vars = len(vars)
-
+    labels_dct = json_object["labels_dct"]
     class_names = json_object["class_names"]
     labels = json_object["labels"]
 
@@ -174,7 +173,7 @@ def classify(json_object, data, filename_json, author, algorithm, flag):
         rls, data_tests = fuzzyfy(data, division, ddv, labels, n_vars, class_names, algorithm)
         rules = list(itertools.chain(*rls))
         len_iter = calc_len_rules(rules, class_names)
-        average_amp, tuple_list_amp, dict_rules_amp = ejecutar_clasificacion(data_tests, algorithm, rules, ddv, labels)
+        average_amp, tuple_list_amp, dict_rules_amp = ejecutar_clasificacion(data_tests, algorithm, rules, ddv, labels, labels_dct)
         
         dict_list.append(dict_rules_amp)
         avg.append(average_amp)

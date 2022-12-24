@@ -85,6 +85,7 @@ def fuzzyfy(data, division, ddv, labels, n_vars, class_names, algorithm):
     rules = []
 
     dict_labels = create_label_order(labels)
+    print(dict_labels)
     general_classes_array = divide_classes_general(data, class_names)
     general_data_train, general_data_test = divide_train_test_general(general_classes_array, division[0], division[1])
     

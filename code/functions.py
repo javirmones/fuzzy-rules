@@ -347,3 +347,25 @@ def divide_in_segments(df, labels):
         str_item = "x"+str(x)
         dict_ddv[str_item] = dict_var
     return dict_ddv
+
+
+
+def divide_in_segments_new(df, labels_dtc, vars):
+    dict_ddv = {}
+    m_asoc = {}
+    keys = list(labels_dtc.keys())
+    print(keys)
+
+
+    for k in range(0, len(keys)):
+        key = keys[k]
+        m_asoc[key] = vars[k]
+
+    for key in keys:
+        vals = list(df[m_asoc[key]])
+        max_v = max(vals)
+        min_v = min(vals)
+        dict_var = create_ddv(max_v, min_v, labels_dtc[key]) 
+        dict_ddv[key] = dict_var
+
+    return dict_ddv

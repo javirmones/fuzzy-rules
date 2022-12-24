@@ -1,6 +1,6 @@
 import pandas as pd
 
-from functions import load_data, divide_in_segments
+from functions import load_data, divide_in_segments_new
 from classifier import classify
 FILE_CONFIG = '../files/config.json'
 WINE_CONFIG = '../files/config_wine.json'
@@ -23,6 +23,9 @@ flag = 0
 if not ddv_d:
     print("Dominio de definicion de variable no encontrado")
     print("Creando uno nuevo a partir de los datos")
-    new_ddv_d = divide_in_segments(df, json_object["labels"])
+    dct = json_object["labels_dct"]
+    print(dct)
+    new_ddv_d = divide_in_segments_new(df, json_object["labels_dct"], json_object["vars"])
+    print(new_ddv_d)
     json_object["ddv_d"] = new_ddv_d
-classify(json_object, data, OUTPUT_JSON, author[0], algorithm[0], 1)
+classify(json_object, data, OUTPUT_JSON, author[0], algorithm[0])
