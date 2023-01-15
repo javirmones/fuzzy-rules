@@ -70,7 +70,7 @@ def load_data(df, path):
     data = []
     try:
         json_object = load_json(path)
-        if len(json_object.keys()) < 9:
+        if len(json_object.keys()) < 8:
             raise Exception
     except Exception as e:
         print("Error, te faltan elementos en el archivo de configuracion", e)
@@ -163,17 +163,19 @@ def create_label_order(labels):
         ordered_label_set[labels[tag]] = tag 
     return ordered_label_set
 
-def reestructure_rules(rules, labels):
+def reestructure_rules(rules, ddv):
     
     new_list = []
     for el in range(0, len(rules)):
         new_rule = []
         element = rules[el][0]
-        for y in element:
-            if y == labels:
+        for y in range(0,len(element)):
+            access_key = "x"+str(y)
+            labels = list(ddv[access_key].keys()) 
+            if element[y] == labels:
                 new_rule.append(0)
             else:
-                new_rule.append(y)
+                new_rule.append(element[y])
         new_rule = [new_rule, rules[el][1], rules[el][2]]
         new_list.append(new_rule)
     return new_list

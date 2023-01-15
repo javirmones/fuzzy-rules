@@ -1,7 +1,5 @@
 from functions import *
 
-#DONE
-
 def get_keys_with_value(dic, value):
     key = [key for key, val in dic.items() if val == value]
     return key[0]
@@ -79,7 +77,7 @@ def is_included(rule, amplified_rules):
             boolean = True
     return boolean
 
-def amplify(rule_to_amplify, rule_set_to_check, labels, dict_labels, class_name):
+def amplify(rule_to_amplify, rule_set_to_check, ddv_d, class_name):
     #La primera regla sera de la forma ['A', 'B', 'C', 'D']
     # Hay que intentar amplificarla por ello 
     # Para cada uno de los elemento 
@@ -90,6 +88,8 @@ def amplify(rule_to_amplify, rule_set_to_check, labels, dict_labels, class_name)
     # y también que no está incluida
     nueva_regla = []
     for i in range(0, len(rule_to_amp)):
+        access_key = "x"+str(i)
+        labels = list(ddv_d[access_key].keys()) 
         sub_regla = []
         if len(sub_regla) == 0:
             sub_regla.append(rule_to_amp[i])
@@ -104,18 +104,19 @@ def amplify(rule_to_amplify, rule_set_to_check, labels, dict_labels, class_name)
                 if not comprobar_ampliacion(rule_to_amp, rule_set_to_check):
                     sub_regla.pop()
  
-        sub_regla = ordered_tags(dict_labels, sub_regla)
+        #sub_regla = ordered_tags(dict_labels, sub_regla)
         nueva_regla.append(sub_regla)
         nueva_tupla = [nueva_regla, 1, class_name]
     return nueva_tupla
 
-def amplify_algorithm(rules_to_amplify, rule_set_to_check, labels, dict_labels, class_name):
+def amplify_algorithm(rules_to_amplify, rule_set_to_check, ddv_d, class_name):
     # Primer paso amplificar la primera regla
     amplified_rules = []
     rules_t = rules_to_amplify.copy()
+
     for x in range(0, len(rules_t)):
         if not is_included(rules_to_amplify[x], amplified_rules):
-            regla_ampliada = amplify(rules_to_amplify[x], rule_set_to_check, labels, dict_labels, class_name)
+            regla_ampliada = amplify(rules_to_amplify[x], rule_set_to_check, ddv_d, class_name)
             amplified_rules.append(regla_ampliada)
     
     return amplified_rules

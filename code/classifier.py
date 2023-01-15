@@ -101,28 +101,24 @@ def determine_shot_rules(example, algorithm, rules, ddv):
     return compare_list[pos_max]
 
 
-def ejecutar_clasificacion(data_tests, algorithm, rules, ddv, labels, labels_dct):
+def ejecutar_clasificacion(data_tests, algorithm, rules, ddv):
     tuple_list = []
     fail = 0
     counter = 0
     elements_no_classified = 0
     #first_element = ('Ejemplo', 'Ejemplo fuzzy', 'Nº Regla', 'Activacion', 'Clase ejemplo', 'Prediccion', 'Resultado')
-    data_test_fuzzy = fuzzyfy_test(data_tests, ddv, labels)
+    data_test_fuzzy = fuzzyfy_test(data_tests, ddv)
     dict_rules = create_dict_rules(rules)
     #tuple_list.append(first_element)
     
-
     for n in range(0, len(data_tests)):
         example = data_tests[n]
-    
         max_rule = determine_shot_rules(example[0], algorithm, rules, ddv)
-
         rule_class_name = max_rule[0][2]
         #Comprobar que efectivamente la activacion es > 0
         if max_rule[1] > 0:
             
             key = get_keys_with_value(dict_rules, max_rule[0])
-            
             if check_accuracy(rule_class_name, example[1]) == 1:
                 acc = "Acierto"
             elif check_accuracy(rule_class_name, example[1]) == 0:
@@ -150,15 +146,20 @@ def ejecutar_clasificacion(data_tests, algorithm, rules, ddv, labels, labels_dct
 def classify(json_object, data, filename_json, author, algorithm):
     inicio = time.time()
     date = datetime.now()
+    legend_test = "('Ejemplo', 'Ejemplo fuzzy', 'N_Regla', 'Activacion', 'Clase ejemplo', 'Prediccion', 'Resultado')"
     path_json = PATH + filename_json + '_' + algorithm +'.json'
     division = [json_object["train"], json_object["test"]]
     ddv = json_object["ddv_d"]
+    labels_ddv = {}
+
+    for x, _ in ddv.items():
+        labels_ddv[x] = list(ddv[x].keys()) 
+    
     vars = json_object["vars"]
     vars.pop(-1)
     n_vars = len(vars)
-    labels_dct = json_object["labels_dct"]
     class_names = json_object["class_names"]
-    labels = json_object["labels"]
+    #labels = json_object["labels"]
 
     avg = []
     ej_list = []
@@ -170,11 +171,10 @@ def classify(json_object, data, filename_json, author, algorithm):
     for ej in range(1, json_object["execs"]+1):
         rules = []
         len_iter = []
-        rls, data_tests = fuzzyfy(data, division, ddv, labels, n_vars, class_names, algorithm)
+        rls, data_tests = fuzzyfy(data, division, ddv, n_vars, class_names, algorithm)
         rules = list(itertools.chain(*rls))
         len_iter = calc_len_rules(rules, class_names)
-        average_amp, tuple_list_amp, dict_rules_amp = ejecutar_clasificacion(data_tests, algorithm, rules, ddv, labels, labels_dct)
-        
+        average_amp, tuple_list_amp, dict_rules_amp = ejecutar_clasificacion(data_tests, algorithm, rules, ddv)
         dict_list.append(dict_rules_amp)
         avg.append(average_amp)
         tuple_list.append(tuple_list_amp)
@@ -186,13 +186,11 @@ def classify(json_object, data, filename_json, author, algorithm):
     n_examples = len(data)
     n_examples_train = n_examples - len(data_tests)
     n_examples_test = n_examples - n_examples_train
-    
+
     fin = time.time()
     tiempo = round(fin-inicio,1)
-
     final_dict = {}
   
-
     for ej in range(0, len(ej_list)):
         dict_class_name = {}
         avg_n = avg[ej]
@@ -202,7 +200,7 @@ def classify(json_object, data, filename_json, author, algorithm):
             tuple_class = {}
             dict_rules = {}
             class_name = class_names[class_n]
-            dict_class_name["class_name_"+str(class_n)] = class_name
+            dict_class_name["class_name_n_"+str(class_n)] = class_name
             element = dict_list[ej]
             for key, rule in element.items():
                 if rule[2] == class_name:
@@ -216,26 +214,26 @@ def classify(json_object, data, filename_json, author, algorithm):
                     tuple_class["P"+str(el)] = str(ne_tuple_list[el])
                     counter_test += 1
         
-            dict_class_name["n_rules_"+str(class_n)] = counter
-            dict_class_name["rules_"+str(class_n)] = dict_rules
-            dict_class_name["n_tests_"+str(class_n)] = counter_test
-            dict_class_name["tests_"+str(class_n)] = tuple_class
+            dict_class_name["n_rules_c_"+str(class_n)] = counter
+            dict_class_name["rules_c_"+str(class_n)] = dict_rules
+            dict_class_name["n_tests_c_"+str(class_n)] = counter_test
+            dict_class_name["legend_tests_c_"+str(class_n)] = legend_test
+            dict_class_name["tests_c_"+str(class_n)] = tuple_class
 
         dict_class_name["accuracy"] = str(avg_n[0])   
         dict_class_name["no_classified"] = str(avg_n[1])
         dict_class_name["fail"] = str(avg_n[2])
-        final_dict["it_"+str(ej)]=dict_class_name
+        final_dict["iter_number_"+str(ej)]=dict_class_name
     #if flag == 1:
     #    final_dict["ddv"] = ddv 
     final_dict["total_examples"] = n_examples
     final_dict["vars"] = vars
-    final_dict["labels"] = labels
-    final_dict["number_labels"] = len(labels)
+    final_dict["labels"] = labels_ddv
     final_dict["target_var"] = json_object["target_var"]
     final_dict["number_vars"] = n_vars
     final_dict["n_examples_train"] = n_examples_train
     final_dict["n_examples_test"] = n_examples_test
-    final_dict["avg_acc"] = average_mean[0]
+    final_dict["avg_accuracy"] = average_mean[0]
     final_dict["avg_no_class"] = average_mean[1]
     final_dict["avg_fail"] = average_mean[2]
     final_dict["time"] = tiempo

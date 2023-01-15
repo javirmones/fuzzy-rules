@@ -48,12 +48,9 @@ def main():
             classify(json_object, data, OUTPUT_JSON, author[1], algorithm[1])
         elif option == 4:
             exit_var = True
-
         else:
             print("Introduce un numero entre 1 y 4")
 
-
 #    si indicas vacio ddv -> crear automaticamente
 if __name__=="__main__":
-    
     main()
